@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="面向销售问答与运营洞察的证据型智能体原型" />
+  <meta name="theme-color" content="#f5f5f7" />
+  <title>证答台 · 销售知识与风险中枢</title>
+  <link rel="icon" type="image/svg+xml" href="logo-mark.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section class="login-screen" id="login-screen" aria-labelledby="login-title">
+    <div class="login-visual">
+      <div class="login-brand"><img src="logo-mark.svg" alt="" /><strong>证答台</strong></div>
+      <div class="login-copy">
+        <span class="login-kicker">企业知识 · 权限隔离 · 全程留痕</span>
+        <h1 id="login-title">让销售得到答案，<br>让运营看见问题。</h1>
+        <p>登录后按飞书账号自动进入对应工作区。销售只能使用问答；运营可以查看洞察、知识源和配置，也可以进入不计入统计的测试对话。</p>
+      </div>
+      <div class="login-proof">
+        <span><i>✓</i> 文档权限随账号继承</span>
+        <span><i>✓</i> 运营数据接口强制鉴权</span>
+        <span><i>✓</i> 测试对话默认不污染统计</span>
+      </div>
+    </div>
+    <div class="login-panel">
+      <div class="login-card">
+        <span class="eyebrow">组织账号登录</span>
+        <h2>欢迎使用证答台</h2>
+        <p>使用公司飞书账号登录。系统会根据账号配置识别销售或运营身份。</p>
+        <button class="feishu-login" id="feishu-login"><span class="feishu-logo">飞</span>使用飞书账号登录</button>
+        <div class="login-note"><span>◇</span>系统不会读取与业务无关的个人信息</div>
+        <div class="demo-login" id="demo-login">
+          <div><span>私有预览</span><b>选择一个身份体验权限差异</b></div>
+          <button data-demo-role="sales"><i>销</i><span><strong>销售身份</strong><small>仅查看智能问答</small></span><em>进入</em></button>
+          <button data-demo-role="ops"><i>运</i><span><strong>运营身份</strong><small>含后台、测试问答</small></span><em>进入</em></button>
+        </div>
+      </div>
+      <p class="login-footer">证答台仅向组织内已授权成员开放</p>
+    </div>
+  </section>
+
+  <div class="app-shell auth-locked" id="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="logo-mark.svg" alt="" /></div>
+        <div>
+          <div class="brand-name">证答台</div>
+          <div class="brand-subtitle">销售知识与风险中枢</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="主导航">
+        <button class="nav-item active" data-view="sales" data-roles="sales,ops">
+          <span class="nav-icon">✦</span><span>销售问答</span>
+        </button>
+        <button class="nav-item" data-view="ops" data-roles="ops">
+          <span class="nav-icon">⌁</span><span>运营洞察</span><span class="nav-badge">3</span>
+        </button>
+        <button class="nav-item" data-view="optimize" data-roles="ops">
+          <span class="nav-icon">◎</span><span>评测与优化</span>
+        </button>
+        <button class="nav-item" data-view="knowledge" data-roles="ops">
+          <span class="nav-icon">▱</span><span>知识源</span>
+        </button>
+        <button class="nav-item" data-view="settings" data-roles="ops">
+          <span class="nav-icon">⚙</span><span>接入配置</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sync-card" data-roles="ops">
+          <div class="sync-title"><span class="live-dot"></span>知识库已同步</div>
+          <div class="sync-meta">32 份文件 · 8 分钟前</div>
+          <div class="sync-progress"><span></span></div>
+        </div>
+        <div class="profile">
+          <div class="avatar" id="profile-avatar">高</div>
+          <div><strong id="profile-name">未登录</strong><span id="profile-role">等待身份验证</span></div>
+          <button id="logout-button" aria-label="退出登录" title="退出登录">↪</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="breadcrumb"><span id="section-label">销售工作台</span><span>/</span><strong id="page-label">智能问答</strong></div>
+          <h1 id="page-title">有证据，才回答</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="role-chip" id="role-chip">未登录</span>
+          <span class="demo-chip"><span></span>预览数据</span>
+          <button class="ghost-button" id="platform-feedback" data-roles="sales">平台反馈</button>
+          <button class="icon-button" id="notifications" data-roles="ops" aria-label="通知">♢<i></i></button>
+          <button class="primary-small" data-go="settings" data-roles="ops">连接飞书</button>
+        </div>
+      </header>
+
+      <section class="view active" id="view-sales">
+        <div class="sales-layout">
+          <section class="chat-panel">
+            <div class="chat-head">
+              <div>
+                <span class="eyebrow">新对话</span>
+                <h2>销售知识助手</h2>
+              </div>
+              <div class="chat-head-actions">
+                <button class="ghost-button" id="conversation-feedback" data-roles="sales">对话反馈</button>
+                <button class="ghost-button" id="clear-chat">清空</button>
+                <button class="ghost-button" id="new-chat">＋ 新对话</button>
+              </div>
+            </div>
+
+            <div class="test-mode-bar" id="test-mode-bar" hidden>
+              <div><span class="test-badge">运营测试</span><p>本次对话默认不写入销售对话库，也不计入运营统计。</p></div>
+              <label class="switch-control"><input type="checkbox" id="record-test-toggle"><span></span><b>计入分析</b></label>
+            </div>
+
+            <div class="chat-stream" id="chat-stream" aria-live="polite">
+              <div class="welcome-card">
+                <div class="assistant-orb">✦</div>
+                <h3>把客户现场的情况直接告诉我</h3>
+                <p>不需要记住文档字段。我会先补齐必要信息，再依据已授权文件回答，并标出原文、链接和更新时间。</p>
+                <div class="prompt-grid">
+                  <button class="prompt-card" data-prompt="客户想把企业版合同改成按月付款，可以答应吗？">
+                    <span class="prompt-icon blue">合</span><span><strong>合同与付款</strong><small>客户想改成按月付款，可以答应吗？</small></span>
+                  </button>
+                  <button class="prompt-card" data-prompt="客户问数据能不能保证今天完成迁移，我应该怎么回复？">
+                    <span class="prompt-icon orange">险</span><span><strong>承诺风险</strong><small>能否保证今天完成数据迁移？</small></span>
+                  </button>
+                  <button class="prompt-card" data-prompt="客户是华东区制造业新签企业，退款流程怎么走？">
+                    <span class="prompt-icon green">流</span><span><strong>流程查询</strong><small>新签企业的退款流程怎么走？</small></span>
+                  </button>
+                  <button class="prompt-card" data-prompt="这张报价截图里的折扣审批到哪一级？">
+                    <span class="prompt-icon purple">图</span><span><strong>图片识别</strong><small>识别截图后查询折扣审批规则</small></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="composer-wrap">
+              <div class="attachment-preview" id="attachment-preview"></div>
+              <div class="composer">
+                <label class="attach-button" title="上传图片或文件">
+                  <input type="file" id="file-input" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" multiple />
+                  <span>＋</span>
+                </label>
+                <textarea id="message-input" rows="1" placeholder="描述客户的真实问题；不知道的信息可以直接说不知道…"></textarea>
+                <button class="send-button" id="send-button" aria-label="发送">↑</button>
+              </div>
+              <div class="composer-foot">
+                <span>Enter 发送 · Shift + Enter 换行</span>
+                <span><i class="shield">◇</i>回答将经过证据与承诺风险校验</span>
+              </div>
+            </div>
+          </section>
+
+          <aside class="context-panel">
+            <div class="context-head">
+              <div><span class="eyebrow">实时判断</span><h3>本次请求</h3></div>
+              <span class="status-pill neutral" id="request-status">等待提问</span>
+            </div>
+
+            <div class="completeness-card">
+              <div class="donut" id="donut" style="--value:0"><span id="completeness-value">0%</span></div>
+              <div><strong>信息完整度</strong><p id="completeness-copy">提交问题后，我会判断是否需要追问。</p></div>
+            </div>
+
+            <div class="context-section">
+              <div class="section-label-row"><h4>已识别信息</h4><span id="fact-count">0 项</span></div>
+              <div class="fact-list" id="fact-list">
+                <div class="empty-line">暂未识别</div>
+              </div>
+            </div>
+
+            <div class="context-section">
+              <div class="section-label-row"><h4>证据门槛</h4><span>强制</span></div>
+              <div class="rule-list">
+                <div><i class="rule-check">✓</i><span>回答必须附文件原文</span></div>
+                <div><i class="rule-check">✓</i><span>展示文件链接与更新时间</span></div>
+                <div><i class="rule-check">✓</i><span>无证据不做保证性承诺</span></div>
+                <div><i class="rule-check">✓</i><span>证据冲突时提示人工确认</span></div>
+              </div>
+            </div>
+
+            <div class="scope-card">
+              <div class="scope-icon">◎</div>
+              <div><strong>当前检索范围</strong><p>销售制度库、合同政策、交付 SOP、32 份授权文件</p></div>
+              <button data-go="knowledge">查看</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-ops">
+        <div class="section-intro">
+          <div><span class="eyebrow">过去 7 天</span><h2>运营洞察</h2><p>从销售原始对话中识别需求、风险与知识缺口。AI 结论可回溯到原文。</p></div>
+          <div class="ops-intro-actions"><span class="sync-live" id="ops-sync-status"><i></i>当前设备已同步</span><div class="range-switch"><button class="active">7 天</button><button>30 天</button><button>季度</button></div></div>
+        </div>
+
+        <div class="metric-grid">
+          <article class="metric-card"><div class="metric-icon blue">↗</div><div class="metric-top"><span>对话总量</span><em>实时</em></div><strong id="metric-total">1,284</strong><small id="metric-total-copy">等待新对话同步</small></article>
+          <article class="metric-card"><div class="metric-icon orange">!</div><div class="metric-top"><span>承诺风险</span><em class="warn">需关注</em></div><strong id="metric-risk">37</strong><small id="metric-risk-copy">其中 8 条为高风险</small></article>
+          <article class="metric-card"><div class="metric-icon purple">?</div><div class="metric-top"><span>未命中问题</span><em>-8.1%</em></div><strong id="metric-unanswered">64</strong><small>知识覆盖率 95.0%</small></article>
+          <article class="metric-card"><div class="metric-icon green">✓</div><div class="metric-top"><span>一次解决率</span><em>+3.2%</em></div><strong>78.6%</strong><small>目标值 82%</small></article>
+        </div>
+
+        <div class="ops-grid">
+          <article class="panel trend-panel">
+            <div class="panel-head"><div><h3>需求与风险趋势</h3><p>对话量及风险命中次数</p></div><div class="legend"><span><i class="legend-blue"></i>对话</span><span><i class="legend-orange"></i>风险</span></div></div>
+            <div class="chart-wrap">
+              <div class="chart-y"><span>240</span><span>180</span><span>120</span><span>60</span><span>0</span></div>
+              <svg class="trend-chart" viewBox="0 0 700 250" preserveAspectRatio="none" aria-label="对话趋势图">
+                <defs><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2f6fed" stop-opacity=".24"/><stop offset="100%" stop-color="#2f6fed" stop-opacity="0"/></linearGradient></defs>
+                <g class="grid-lines"><line x1="0" y1="20" x2="700" y2="20"/><line x1="0" y1="72" x2="700" y2="72"/><line x1="0" y1="124" x2="700" y2="124"/><line x1="0" y1="176" x2="700" y2="176"/><line x1="0" y1="228" x2="700" y2="228"/></g>
+                <path class="area" d="M0,171 C55,160 62,142 116,146 S186,122 232,134 S315,102 350,110 S440,71 466,91 S560,65 583,75 S657,40 700,52 L700,230 L0,230 Z"/>
+                <path class="line blue-line" d="M0,171 C55,160 62,142 116,146 S186,122 232,134 S315,102 350,110 S440,71 466,91 S560,65 583,75 S657,40 700,52"/>
+                <path class="line orange-line" d="M0,207 C70,199 76,211 116,203 S191,188 232,199 S314,179 350,190 S427,166 466,180 S542,160 583,174 S651,148 700,162"/>
+                <g class="points"><circle cx="0" cy="171" r="4"/><circle cx="116" cy="146" r="4"/><circle cx="232" cy="134" r="4"/><circle cx="350" cy="110" r="4"/><circle cx="466" cy="91" r="4"/><circle cx="583" cy="75" r="4"/><circle cx="700" cy="52" r="4"/></g>
+              </svg>
+              <div class="chart-x"><span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>周日</span></div>
+            </div>
+          </article>
+
+          <article class="panel category-panel">
+            <div class="panel-head"><div><h3>高频需求分布</h3><p>共识别 1,517 个需求标签</p></div><button class="more-button">•••</button></div>
+            <div class="category-list">
+              <div><span><i class="cat-dot c1"></i>报价与折扣</span><strong>31.2%</strong><div><b style="width:31.2%"></b></div><small>473 次</small></div>
+              <div><span><i class="cat-dot c2"></i>合同与付款</span><strong>24.7%</strong><div><b style="width:24.7%"></b></div><small>375 次</small></div>
+              <div><span><i class="cat-dot c3"></i>交付与实施</span><strong>19.4%</strong><div><b style="width:19.4%"></b></div><small>294 次</small></div>
+              <div><span><i class="cat-dot c4"></i>产品能力</span><strong>14.8%</strong><div><b style="width:14.8%"></b></div><small>225 次</small></div>
+              <div><span><i class="cat-dot c5"></i>售后与退款</span><strong>9.9%</strong><div><b style="width:9.9%"></b></div><small>150 次</small></div>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel conversation-table-panel">
+          <div class="panel-head"><div><h3>待处理对话</h3><p id="ops-sync-copy">按风险与知识缺口排序，点击可查看原文及 AI 判断</p></div><div class="table-actions"><button class="filter-button">≡ 筛选</button><button class="ghost-button">导出</button></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>时间 / 销售</th><th>原始问题</th><th>AI 归类</th><th>风险</th><th>处理状态</th><th></th></tr></thead>
+              <tbody id="conversation-rows">
+                <tr data-case="1"><td><strong>10:42</strong><small>销售演示 · 演示销售组</small></td><td><span class="question-cell">客户一定要求我们承诺本周五上线，我能直接写进合同吗？</span></td><td><span class="tag">交付承诺</span><span class="tag">合同</span></td><td><span class="risk high">高风险</span></td><td><span class="state pending">待确认</span></td><td><button class="row-arrow">›</button></td></tr>
+                <tr data-case="2"><td><strong>09:18</strong><small>陈雨 · 大客户部</small></td><td><span class="question-cell">制造业客户有 800 个账号，标准折扣最多能给多少？</span></td><td><span class="tag">报价折扣</span></td><td><span class="risk medium">中风险</span></td><td><span class="state progress">处理中</span></td><td><button class="row-arrow">›</button></td></tr>
+                <tr data-case="3"><td><strong>昨天</strong><small>李然 · 华北二组</small></td><td><span class="question-cell">客户数据在海外，现在可以直接接入吗？</span></td><td><span class="tag">数据合规</span><span class="tag">产品能力</span></td><td><span class="risk high">高风险</span></td><td><span class="state pending">待确认</span></td><td><button class="row-arrow">›</button></td></tr>
+                <tr data-case="4"><td><strong>昨天</strong><small>周浩 · 渠道组</small></td><td><span class="question-cell">退款材料已经交了，通常几天能到账？</span></td><td><span class="tag">售后退款</span></td><td><span class="risk low">低风险</span></td><td><span class="state done">已解决</span></td><td><button class="row-arrow">›</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel feedback-inbox-panel">
+          <div class="panel-head"><div><h3>销售反馈收件箱</h3><p>对话反馈附带当前问题上下文；平台反馈用于产品体验和功能建议。</p></div><div class="feedback-summary"><span><b id="feedback-pending-count">1</b> 待处理</span><span>平均 <b id="feedback-average-rating">3.0</b> 分</span></div></div>
+          <div class="feedback-filter-bar"><button class="active" data-feedback-filter="all">全部</button><button data-feedback-filter="conversation">对话反馈</button><button data-feedback-filter="platform">平台反馈</button></div>
+          <div class="table-wrap">
+            <table class="feedback-table">
+              <thead><tr><th>销售 / 时间</th><th>类型</th><th>反馈内容</th><th>评分</th><th>状态</th><th></th></tr></thead>
+              <tbody id="feedback-inbox-rows"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="view" id="view-optimize">
+        <div class="section-intro">
+          <div><span class="eyebrow">人工审核闭环</span><h2>评测与优化</h2><p>测试对话只产生候选样本；审核、批量评测和灰度发布在这里完成。</p></div>
+          <div class="intro-actions"><button class="ghost-button" id="export-eval-dataset">生成训练集</button><button class="primary-small" id="run-evaluation">运行候选评测</button></div>
+        </div>
+
+        <div class="eval-metric-grid">
+          <article class="metric-card"><div class="metric-icon blue">集</div><div class="metric-top"><span>评测样本</span><em>累计</em></div><strong id="eval-total">3</strong><small>覆盖销售高频场景</small></article>
+          <article class="metric-card"><div class="metric-icon green">审</div><div class="metric-top"><span>已审核</span><em>可评测</em></div><strong id="eval-reviewed">2</strong><small id="eval-pending-copy">1 条待审核</small></article>
+          <article class="metric-card"><div class="metric-icon purple">引</div><div class="metric-top"><span>引用正确率</span><em>候选版</em></div><strong id="eval-citation">91%</strong><small>基准版 82%</small></article>
+          <article class="metric-card"><div class="metric-icon orange">险</div><div class="metric-top"><span>风险召回率</span><em>候选版</em></div><strong id="eval-risk">94%</strong><small>基准版 86%</small></article>
+        </div>
+
+        <div class="evaluation-grid">
+          <article class="panel eval-dataset-panel">
+            <div class="panel-head"><div><h3>评测数据集</h3><p>来自运营测试和人工基准；错误样本必须补充正确答案后才能进入评测。</p></div><span class="code-chip" id="eval-dataset-version">dataset-v1</span></div>
+            <div class="table-wrap">
+              <table class="eval-table">
+                <thead><tr><th>问题</th><th>评价</th><th>错误类型</th><th>审核</th></tr></thead>
+                <tbody id="eval-example-rows"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel comparison-panel">
+            <div class="panel-head"><div><h3>版本对比</h3><p>同一批已审核样本分别运行当前版与候选版。</p></div><span class="eval-run-status" id="eval-run-status">已完成</span></div>
+            <div class="version-head"><div><span>当前线上</span><strong id="baseline-version">sales-evidence-v1</strong></div><b>对比</b><div><span>候选版本</span><strong id="candidate-version">sales-evidence-v2-candidate</strong></div></div>
+            <div class="comparison-list">
+              <div><span>引用正确率</span><b id="baseline-citation">82%</b><i>+9%</i><strong id="candidate-citation">91%</strong></div>
+              <div><span>风险召回率</span><b id="baseline-risk">86%</b><i>+8%</i><strong id="candidate-risk">94%</strong></div>
+              <div><span>拒答准确率</span><b id="baseline-refusal">79%</b><i>+9%</i><strong id="candidate-refusal">88%</strong></div>
+              <div><span>平均延迟</span><b id="baseline-latency">1.68s</b><i class="faster">-0.14s</i><strong id="candidate-latency">1.54s</strong></div>
+            </div>
+            <div class="release-note"><span>✓</span><p><strong>候选版本达到灰度门槛</strong><small>先向运营测试账号发布，确认稳定后再扩大范围。</small></p></div>
+            <button class="wide-button" id="release-candidate">灰度发布候选版本</button>
+          </article>
+
+          <article class="panel model-config-panel">
+            <div class="panel-head"><div><h3>智谱模型配置</h3><p>这里只保存非敏感配置；API Key 必须通过服务端环境变量设置。</p></div><span class="model-provider">智谱 AI</span></div>
+            <div class="model-config-grid">
+              <label><span>模型 ID</span><input id="model-id" value="glm-5.1" /></label>
+              <label><span>Temperature</span><input id="model-temperature" type="number" min="0" max="2" step="0.1" value="0.1" /></label>
+              <label><span>提示词版本</span><input id="prompt-version" value="sales-evidence-v1" /></label>
+              <label><span>检索版本</span><input id="retrieval-version" value="hybrid-search-v1" /></label>
+            </div>
+            <div class="model-config-foot"><span id="model-key-status">API Key：仅服务端可见</span><button class="primary-small" id="save-model-config">保存为候选配置</button></div>
+          </article>
+
+          <article class="panel optimization-guide-panel">
+            <div class="panel-head"><div><h3>优化顺序</h3><p>知识变化更新索引；行为稳定性问题才进入微调。</p></div><span class="code-chip purple">5 步</span></div>
+            <ol class="optimization-steps">
+              <li class="done"><i>1</i><div><strong>修正文档与权限</strong><small>保证知识源有效且当前用户有权访问</small></div></li>
+              <li class="done"><i>2</i><div><strong>优化检索与重排</strong><small>改善直接证据命中率和版本新鲜度</small></div></li>
+              <li class="active"><i>3</i><div><strong>优化提示词与规则</strong><small>控制追问、拒答、结构化字段与风险边界</small></div></li>
+              <li><i>4</i><div><strong>批量评测与灰度</strong><small>用固定测试集比较效果、成本和延迟</small></div></li>
+              <li><i>5</i><div><strong>必要时提交微调</strong><small>仅使用脱敏且人工审核通过的高质量样本</small></div></li>
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-knowledge">
+        <div class="section-intro">
+          <div><span class="eyebrow">证据底座</span><h2>知识源</h2><p>管理可被检索的飞书云文档、本地文件与图片 OCR 内容。</p></div>
+          <div class="intro-actions"><button class="ghost-button" id="sync-button">↻ 立即同步</button><label class="primary-upload"><input type="file" id="knowledge-upload" multiple />＋ 上传文件</label></div>
+        </div>
+        <div class="source-summary">
+          <div><span class="source-logo feishu">飞</span><div><strong>飞书云文档</strong><small>已授权 4 个文件夹</small></div><b class="connected">已连接</b></div>
+          <div><span class="source-logo file">文</span><div><strong>上传文件</strong><small>PDF / Word / Excel / TXT</small></div><b>18 份</b></div>
+          <div><span class="source-logo image">图</span><div><strong>图片 OCR</strong><small>JPG / PNG / 扫描 PDF</small></div><b>9 份</b></div>
+          <div><span class="source-logo scope">权</span><div><strong>权限继承</strong><small>仅检索用户有权内容</small></div><b class="connected">开启</b></div>
+        </div>
+        <article class="panel knowledge-panel">
+          <div class="knowledge-toolbar">
+            <div class="search-box">⌕<input id="doc-search" placeholder="搜索文件名或内容" /></div>
+            <div><button class="filter-button">全部类型⌄</button><button class="filter-button">全部状态⌄</button></div>
+          </div>
+          <div class="doc-list" id="doc-list">
+            <div class="doc-row" data-search="2026 企业版商务政策 折扣 付款 云文档"><span class="doc-icon cloud">飞</span><div class="doc-main"><strong>2026 企业版商务政策</strong><small>飞书云文档 · 商务运营部</small></div><div class="doc-scope"><span>合同</span><span>折扣</span></div><div class="doc-update"><strong>2026-09-12 18:30</strong><small>最近更新</small></div><span class="index-status good">已索引</span><button class="more-button">•••</button></div>
+            <div class="doc-row" data-search="标准合同付款与开票说明 PDF 付款 合同"><span class="doc-icon pdf">PDF</span><div class="doc-main"><strong>标准合同付款与开票说明.pdf</strong><small>上传文件 · 2.4 MB</small></div><div class="doc-scope"><span>付款</span><span>开票</span></div><div class="doc-update"><strong>2026-09-08 11:20</strong><small>最近更新</small></div><span class="index-status good">已索引</span><button class="more-button">•••</button></div>
+            <div class="doc-row" data-search="实施交付 SLA v3.2 Word 交付 迁移"><span class="doc-icon word">W</span><div class="doc-main"><strong>实施交付 SLA v3.2.docx</strong><small>上传文件 · 864 KB</small></div><div class="doc-scope"><span>交付</span><span>SLA</span></div><div class="doc-update"><strong>2026-09-16 09:05</strong><small>最近更新</small></div><span class="index-status good">已索引</span><button class="more-button">•••</button></div>
+            <div class="doc-row" data-search="渠道折扣审批截图 OCR 图片 折扣"><span class="doc-icon img">IMG</span><div class="doc-main"><strong>渠道折扣审批截图.png</strong><small>图片 OCR · 识别 436 字</small></div><div class="doc-scope"><span>折扣</span><span>审批</span></div><div class="doc-update"><strong>2026-09-14 14:18</strong><small>最近更新</small></div><span class="index-status warn">需复核</span><button class="more-button">•••</button></div>
+            <div class="doc-row" data-search="售后退款 SOP 云文档 退款"><span class="doc-icon cloud">飞</span><div class="doc-main"><strong>售后退款处理 SOP</strong><small>飞书云文档 · 客户成功部</small></div><div class="doc-scope"><span>退款</span><span>售后</span></div><div class="doc-update"><strong>2026-08-22 16:45</strong><small>最近更新</small></div><span class="index-status stale">可能过期</span><button class="more-button">•••</button></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="section-intro">
+          <div><span class="eyebrow">从演示到生产</span><h2>接入配置</h2><p>网页只调用你自己的后端；飞书应用密钥、文档权限与模型密钥均保留在服务端。</p></div>
+          <span class="status-pill neutral" id="global-connection">当前：演示模式</span>
+        </div>
+        <div class="settings-grid">
+          <article class="panel config-panel">
+            <div class="panel-head"><div><h3>网页接口</h3><p>填入部署后的后端地址，前端会切换为真实数据。</p></div><span class="code-chip">API</span></div>
+            <label class="field-label">API Base URL</label>
+            <div class="input-with-button"><input id="api-url" placeholder="https://your-domain.com/api" /><button id="test-api">测试连接</button></div>
+            <div class="connection-result" id="connection-result">尚未测试。留空时使用内置演示数据。</div>
+            <div class="endpoint-list">
+              <div><code>POST /chat</code><span>追问、检索、证据化回答</span></div>
+              <div><code>POST /files</code><span>上传文件并进入解析 / OCR</span></div>
+              <div><code>GET /ops/insights</code><span>运营指标与风险队列</span></div>
+              <div><code>GET /sources</code><span>知识源状态与更新时间</span></div>
+            </div>
+          </article>
+          <article class="panel launch-panel">
+            <div class="panel-head"><div><h3>飞书接入清单</h3><p>按顺序完成，不在浏览器中保存任何密钥。</p></div><span class="code-chip purple">4 步</span></div>
+            <ol class="setup-list">
+              <li><i>1</i><div><strong>创建企业自建应用</strong><p>在飞书开放平台创建应用，配置回调地址与可用成员范围。</p></div><span>未开始</span></li>
+              <li><i>2</i><div><strong>申请最小权限</strong><p>云文档读取、云空间文件读取、机器人消息；按需增加通讯录基础权限。</p></div><span>未开始</span></li>
+              <li><i>3</i><div><strong>同步与解析</strong><p>后端拉取文档/文件，Office 与 PDF 提取文本，扫描件和图片进入 OCR。</p></div><span>未开始</span></li>
+              <li><i>4</i><div><strong>发布网页或机器人</strong><p>妙搭承载网页工作台；飞书机器人复用同一 /chat 接口。</p></div><span>未开始</span></li>
+            </ol>
+            <button class="wide-button" id="copy-checklist">复制接入清单</button>
+          </article>
+        </div>
+        <article class="panel guardrail-panel">
+          <div><span class="guard-icon">◇</span><div><h3>上线前必须保留的四道护栏</h3><p>这些规则决定它是不是“可靠的销售助手”，不是装饰性配置。</p></div></div>
+          <div class="guard-grid"><span>文档级权限过滤</span><span>回答证据可回溯</span><span>承诺类问题强制降级</span><span>原始对话不可被 AI 摘要覆盖</span></div>
+        </article>
+        <article class="panel permission-panel">
+          <div class="panel-head"><div><h3>账号与权限</h3><p>角色由服务端根据飞书账号和运营名单判断，前端无法自行提权。</p></div><span class="code-chip">RBAC</span></div>
+          <div class="permission-grid">
+            <div><span class="permission-role sales-role">销售</span><strong>仅销售问答</strong><p>可以发起对话、上传附件、查看自己当前会话中的证据；不能请求运营指标、其他销售对话、知识源管理或系统配置。</p></div>
+            <div><span class="permission-role ops-role">运营</span><strong>后台 + 测试问答</strong><p>可以查看运营洞察和原始对话。进入问答默认不记录，只有主动开启“计入分析”才写入统计。</p></div>
+          </div>
+          <div class="permission-foot">生产角色来源：飞书 open_id / user_id → 服务端角色表或运营人员白名单</div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="case-drawer" id="case-drawer" aria-hidden="true">
+    <div class="drawer-head"><div><span class="risk high" id="drawer-risk">高风险</span><h2>对话详情</h2></div><button id="close-drawer">×</button></div>
+    <div class="drawer-block"><h4>原始对话</h4><div class="raw-chat" id="drawer-raw-chat"><p><span>销售</span>客户一定要求我们承诺本周五上线，我能直接写进合同吗？对方说不写就不签。</p><p><span>助手</span>目前缺少实施评估与资源锁定结果。请问实施负责人是否已书面确认排期？</p><p><span>销售</span>还没有，只是口头说“应该可以”。</p></div></div>
+    <div class="drawer-block"><h4>AI 判断</h4><div class="analysis-box danger" id="drawer-analysis"><strong id="drawer-analysis-title">存在不可逆承诺风险</strong><p id="drawer-analysis-copy">“应该可以”不构成可写入合同的交付证据。建议升级实施负责人和法务确认，未取得书面排期前不承诺具体日期。</p></div></div>
+    <div class="drawer-block"><h4>分类与依据</h4><div class="drawer-tags" id="drawer-tags"><span>交付承诺</span><span>合同条款</span><span>高风险</span><span>需人工确认</span></div><a href="#" class="evidence-link" id="drawer-evidence-link" data-external-link>《实施交付 SLA v3.2》· 更新于 2026-09-16 ↗</a></div>
+    <div class="drawer-actions"><button class="ghost-button" id="mark-noissue">标记误报</button><button class="primary-small" id="mark-handled">标记已处理</button></div>
+  </aside>
+
+  <div class="feedback-modal-backdrop" id="feedback-modal-backdrop"></div>
+  <section class="feedback-modal" id="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-modal-title" aria-hidden="true">
+    <div class="feedback-modal-head"><div><span class="eyebrow" id="feedback-modal-eyebrow">销售反馈</span><h2 id="feedback-modal-title">提交反馈</h2></div><button id="close-feedback-modal" aria-label="关闭">×</button></div>
+    <div class="feedback-context" id="feedback-context" hidden><span>当前对话</span><p id="feedback-conversation-excerpt"></p></div>
+    <label class="feedback-field"><span>反馈类型</span><select id="feedback-category"><option value="answer_quality">回答质量</option><option value="evidence">证据与引用</option><option value="risk">风险判断</option><option value="experience">使用体验</option><option value="feature">功能建议</option><option value="other">其他</option></select></label>
+    <fieldset class="feedback-rating"><legend>整体评分</legend><div><button data-feedback-rating="1">1</button><button data-feedback-rating="2">2</button><button data-feedback-rating="3">3</button><button data-feedback-rating="4">4</button><button data-feedback-rating="5">5</button></div><span id="feedback-rating-copy">请选择 1–5 分</span></fieldset>
+    <label class="feedback-field"><span>具体反馈</span><textarea id="feedback-content" placeholder="请说明哪里不准确、希望如何改进，或你希望平台增加什么能力…"></textarea></label>
+    <p class="feedback-note">反馈将连同你的销售身份和必要的对话上下文提交给运营，不包含未选择的其他对话。</p>
+    <div class="feedback-modal-actions"><button class="ghost-button" id="cancel-feedback">取消</button><button class="primary-small" id="submit-feedback">提交给运营</button></div>
+  </section>
+
+  <div class="feedback-detail-backdrop" id="feedback-detail-backdrop"></div>
+  <aside class="feedback-detail-drawer" id="feedback-detail-drawer" aria-hidden="true">
+    <div class="drawer-head"><div><span class="status-pill neutral" id="feedback-detail-status">待处理</span><h2>销售反馈详情</h2></div><button id="close-feedback-detail">×</button></div>
+    <div class="drawer-block"><h4>反馈内容</h4><div class="feedback-detail-copy" id="feedback-detail-copy"></div></div>
+    <div class="drawer-block"><h4>关联对话</h4><div class="feedback-detail-context" id="feedback-detail-context">平台反馈，无关联对话</div></div>
+    <div class="drawer-block"><h4>运营处理备注</h4><textarea id="feedback-response-note" placeholder="记录处理结果或后续计划…"></textarea></div>
+    <div class="drawer-actions"><button class="ghost-button" id="mark-feedback-progress">标记处理中</button><button class="primary-small" id="resolve-feedback">完成处理</button></div>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
